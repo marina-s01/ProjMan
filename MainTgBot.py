@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[9]:
+# In[ ]:
 
 
 import telebot; #библиотека для работы с телеграм-ботами
@@ -10,7 +10,7 @@ import requests as req
 from telebot import types
 from geopy import geocoders
 bot = telebot.TeleBot('5688775484:AAFfcMbAm_t-qEOnuqanR63ivL4UJ-qJdeY') #переменная для работы с ботом через токен\
-token_accu="o8bQ6kOLDIm242Z9wZqvderTlzk6ynVR" # второй токен: GuL1TlbAFOb3BDTnqE88YwIWmHXyhXCn
+token_accu="DfQJAGlBa0MTGguP4BhYAl6KXpItO1zo" #  токены: GuL1TlbAFOb3BDTnqE88YwIWmHXyhXCn    DfQJAGlBa0MTGguP4BhYAl6KXpItO1zo    o8bQ6kOLDIm242Z9wZqvderTlzk6ynVR
 
 
 def geo_pos(city: str): #получение координат через название города
@@ -112,24 +112,25 @@ def get_city(message): #получаем город
 @bot.message_handler(content_types=['text'])
 def menu_weather(message):
     if message.text == "Узнать погоду":
-        bot.send_message(message.chat.id,"Загрузка..." )
         murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         button7 = types.KeyboardButton("Узнать погоду сейчас")
         button8 = types.KeyboardButton("Узнать погоду по времени")
         murkup.add(button7, button8)
         bot.send_message(message.chat.id, "Какая погода вас интересует? В данный момент или определенный?", reply_markup=murkup)
-        bot.register_next_step_handler(message, )
+        bot.register_next_step_handler(message, send_weather)
     elif message.text == "Настройки":
         murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         button9 = types.KeyboardButton("Изменить город")
         murkup.add(button9)
         bot.send_message(message.chat.id, "Укажите, погода которого вас интересует, для этого воспользуйтесь кнопками ниже", reply_markup=murkup)
     elif message.text == "Обратная связь":
-        bot.send_message(message.chat.id, "Отлично!")   
+        bot.send_message(message.chat.id, "Отлично!") 
         
+        
+@bot.message_handler(content_types=['text'])        
 def send_weather(message):
-    if message.txt == "Узнать погоду сейчас":
-        latitude, longitude=geo_pos(city)
+    if message.text == "Узнать погоду сейчас":
+        latitude, longitude = geo_pos(city)
         cod_loc = code_location(latitude, longitude, token_accu)
         temperature, feeltemperature, precipitation, windspeed, winddir, phrase, humidity = weather_now(cod_loc, token_accu)
         murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -144,7 +145,7 @@ def send_weather(message):
     
     
     
-        day=  #переменная для поиска в массиве необходимого дня в интервали от 0 до 4. 0-сегодняшний день, 1-завтрашний и тд.
+        day=1  #переменная для поиска в массиве необходимого дня в интервали от 0 до 4. 0-сегодняшний день, 1-завтрашний и тд.
         latitude, longitude=geo_pos(city)
         cod_loc = code_location(latitude, longitude, token_accu)
         date, temperaturemin,temperaturemax ,feeltemperaturemin,feeltemperaturemax, precipitation, windspeed, winddir, phrase = weather_day(cod_loc, token_accu,day)
@@ -153,7 +154,7 @@ def send_weather(message):
         button17 = types.KeyboardButton("Настройки")
         button18 = types.KeyboardButton("Обратная связь")
         murkup.add(button16, button17, button18)
-        bot.send_message(message.chat.id,f"Сейчас в {city} {phrase}, {temperature}°C , ветер{winddir} {windspeed} м/с",reply_markup=murkup)
+        bot.send_message(message.chat.id,f"Сейчас в {city} {phrase}, {temperature}°C , ветер {winddir} {windspeed} м/с",reply_markup=murkup)
     
     
 bot.polling(none_stop=True, interval=0) #бесконечный запрос у сервера телеграмма
