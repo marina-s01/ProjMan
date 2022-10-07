@@ -7,6 +7,7 @@
 import telebot; #библиотека для работы с телеграм-ботами
 import json
 import requests as req
+from datetime import timedelta, datetime
 from telebot import types
 from geopy import geocoders
 bot = telebot.TeleBot('5688775484:AAFfcMbAm_t-qEOnuqanR63ivL4UJ-qJdeY') #переменная для работы с ботом через токен\
@@ -126,7 +127,10 @@ def menu_weather(message):
     elif message.text == "Обратная связь":
         bot.send_message(message.chat.id, "Отлично!") 
         
-        
+day1 = datetime.now()+timedelta(1)
+day2 = datetime.now()+timedelta(2)
+day3 = datetime.now()+timedelta(3)
+day4 = datetime.now()+timedelta(4)       
 @bot.message_handler(content_types=['text'])        
 def send_weather(message):
     if message.text == "Узнать погоду сейчас":
@@ -141,11 +145,36 @@ def send_weather(message):
         bot.send_message(message.chat.id,f"Сейчас в {city} {phrase}, {temperature}°C , ветер{winddir} {windspeed} м/с",reply_markup=murkup)
     elif message.text == "Узнать погоду по времени":
        #выбор дня, не позднее 5 дней с сегодняшнего дня, и поиск разницы с сегодняшней датой
+        
+        murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        button19 = types.KeyboardButton(day1.strftime("%d-%m-%Y"))
+        button20 = types.KeyboardButton(day2.strftime("%d-%m-%Y"))
+        button21 = types.KeyboardButton(day3.strftime("%d-%m-%Y"))
+        button22 = types.KeyboardButton(day4.strftime("%d-%m-%Y"))
+        murkup.add(button19, button20, button21, button22)
+        bot.send_message(message.chat.id, "Выберите день", reply_markup=murkup)
+        bot.register_next_step_handler(message, menu_day)
     
-    
-    
-    
-        day=1  #переменная для поиска в массиве необходимого дня в интервали от 0 до 4. 0-сегодняшний день, 1-завтрашний и тд.
+@bot.message_handler(content_types=['text'])     #выбор дня, не позднее 5 дней с сегодняшнего дня, и поиск разницы с сегодняшней датой    
+def menu_day(message):
+    if message.text == day1.strftime("%d-%m-%Y"):
+        murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        day=1
+        bot.send_message(message.chat.id, "Отлично! День = " + str(day), reply_markup=murkup)
+    elif message.text == day2.strftime("%d-%m-%Y"):
+        murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        day=2
+        bot.send_message(message.chat.id, "Отлично! День = " + str(day), reply_markup=murkup)
+    elif message.text == day3.strftime("%d-%m-%Y"):
+        murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        day=3
+        bot.send_message(message.chat.id, "Отлично! День = " + str(day), reply_markup=murkup)
+    elif message.text == day4.strftime("%d-%m-%Y"):
+        murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        day=4
+        bot.send_message(message.chat.id, "Отлично! День = " + str(day), reply_markup=murkup)
+    else: bot.send_message(message.from_user.id, 'Упс! Ошибочка!')
+            """day=1  #переменная для поиска в массиве необходимого дня в интервали от 0 до 4. 0-сегодняшний день, 1-завтрашний и тд.
         latitude, longitude=geo_pos(city)
         cod_loc = code_location(latitude, longitude, token_accu)
         date, temperaturemin,temperaturemax ,feeltemperaturemin,feeltemperaturemax, precipitation, windspeed, winddir, phrase = weather_day(cod_loc, token_accu,day)
@@ -154,7 +183,8 @@ def send_weather(message):
         button17 = types.KeyboardButton("Настройки")
         button18 = types.KeyboardButton("Обратная связь")
         murkup.add(button16, button17, button18)
-        bot.send_message(message.chat.id,f"Сейчас в {city} {phrase}, {temperature}°C , ветер {winddir} {windspeed} м/с",reply_markup=murkup)
+        bot.send_message(message.chat.id,f"Сейчас в {city} {phrase}, {temperature}°C , ветер {winddir} {windspeed} м/с",reply_markup=murkup)"""
+
     
     
 bot.polling(none_stop=True, interval=0) #бесконечный запрос у сервера телеграмма
