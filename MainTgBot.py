@@ -1,18 +1,22 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[7]:
 
 
 import telebot; #библиотека для работы с телеграм-ботами
 import json
 import requests as req
-from datetime import timedelta, datetime
 from telebot import types
 from geopy import geocoders
+from datetime import timedelta, datetime
 bot = telebot.TeleBot('5688775484:AAFfcMbAm_t-qEOnuqanR63ivL4UJ-qJdeY') #переменная для работы с ботом через токен\
-token_accu="DfQJAGlBa0MTGguP4BhYAl6KXpItO1zo" #  токены: GuL1TlbAFOb3BDTnqE88YwIWmHXyhXCn    DfQJAGlBa0MTGguP4BhYAl6KXpItO1zo    o8bQ6kOLDIm242Z9wZqvderTlzk6ynVR
+token_accu="7pNet2S89J6HC7m6DdPIh5beY93ZhPOS" #  токены: GuL1TlbAFOb3BDTnqE88YwIWmHXyhXCn    7pNet2S89J6HC7m6DdPIh5beY93ZhPOS    o8bQ6kOLDIm242Z9wZqvderTlzk6ynVR
 
+day1 = datetime.now()+timedelta(1)
+day2 = datetime.now()+timedelta(2)
+day3 = datetime.now()+timedelta(3)
+day4 = datetime.now()+timedelta(4)
 
 def geo_pos(city: str): #получение координат через название города
     geolocator = geocoders.Nominatim(user_agent="telebot")
@@ -71,12 +75,12 @@ def send_welcome(message):
     bot.reply_to(message, "Давайте определим город, погода которого вас интересует, для этого воспользуйтесь кнопками ниже", reply_markup=markup)
 
 city = ""
-
 cities = [
   "Бердск", "Барабинск", "Искитим",
   "Карасук", "Новосибирск", "Обь",
   "Татарск", "Черепаново", "Тогучин"
-] #Коды: новосибирск-294459
+    
+ #Коды: новосибирск-294459
 
 #Работа с кнопками
 @bot.message_handler(content_types=['text'])
@@ -85,6 +89,8 @@ def menu_one(message):
         bot.send_message(message.from_user.id, 'Введите название города…Например, Новосибирск.')
         bot.register_next_step_handler(message, get_city)
     elif message.text == "Определить геолокацию":
+        global city
+        city="Новосибирск"
         murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         button10 = types.KeyboardButton("Узнать погоду")
         button11 = types.KeyboardButton("Настройки")
@@ -127,10 +133,7 @@ def menu_weather(message):
     elif message.text == "Обратная связь":
         bot.send_message(message.chat.id, "Отлично!") 
         
-day1 = datetime.now()+timedelta(1)
-day2 = datetime.now()+timedelta(2)
-day3 = datetime.now()+timedelta(3)
-day4 = datetime.now()+timedelta(4)       
+        
 @bot.message_handler(content_types=['text'])        
 def send_weather(message):
     if message.text == "Узнать погоду сейчас":
@@ -142,10 +145,10 @@ def send_weather(message):
         button14 = types.KeyboardButton("Настройки")
         button15 = types.KeyboardButton("Обратная связь")
         murkup.add(button13, button14, button15)
-        bot.send_message(message.chat.id,f"Сейчас в {city} {phrase}, {temperature}°C , ветер{winddir} {windspeed} м/с",reply_markup=murkup)
+        bot.send_message(message.chat.id,f"Сейчас в городе {city} {phrase}, {temperature}°C , ветер {winddir}"+" "+f"{windspeed} км/ч",reply_markup=murkup)
+        bot.register_next_step_handler(message, menu_weather)
     elif message.text == "Узнать погоду по времени":
        #выбор дня, не позднее 5 дней с сегодняшнего дня, и поиск разницы с сегодняшней датой
-        
         murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         button19 = types.KeyboardButton(day1.strftime("%d-%m-%Y"))
         button20 = types.KeyboardButton(day2.strftime("%d-%m-%Y"))
@@ -154,38 +157,51 @@ def send_weather(message):
         murkup.add(button19, button20, button21, button22)
         bot.send_message(message.chat.id, "Выберите день", reply_markup=murkup)
         bot.register_next_step_handler(message, menu_day)
-    
+
 @bot.message_handler(content_types=['text'])     #выбор дня, не позднее 5 дней с сегодняшнего дня, и поиск разницы с сегодняшней датой    
 def menu_day(message):
     if message.text == day1.strftime("%d-%m-%Y"):
         murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         day=1
-        bot.send_message(message.chat.id, "Отлично! День = " + str(day), reply_markup=murkup)
+        bot.send_message(message.chat.id, "Отлично!", reply_markup=murkup)
+        weather_choose(message, day,city,token_accu)
     elif message.text == day2.strftime("%d-%m-%Y"):
         murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         day=2
-        bot.send_message(message.chat.id, "Отлично! День = " + str(day), reply_markup=murkup)
+        bot.send_message(message.chat.id, "Отлично!", reply_markup=murkup)
+        weather_choose(message, day,city,token_accu)
     elif message.text == day3.strftime("%d-%m-%Y"):
         murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         day=3
-        bot.send_message(message.chat.id, "Отлично! День = " + str(day), reply_markup=murkup)
+        bot.send_message(message.chat.id, "Отлично! ", reply_markup=murkup)
+        weather_choose(message, day,city,token_accu)
     elif message.text == day4.strftime("%d-%m-%Y"):
         murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         day=4
-        bot.send_message(message.chat.id, "Отлично! День = " + str(day), reply_markup=murkup)
+        bot.send_message(message.chat.id, "Отлично!  ", reply_markup=murkup)
+        weather_choose(message, day,city,token_accu)
     else: bot.send_message(message.from_user.id, 'Упс! Ошибочка!')
-            """day=1  #переменная для поиска в массиве необходимого дня в интервали от 0 до 4. 0-сегодняшний день, 1-завтрашний и тд.
+    
+@bot.message_handler(content_types=['text'])
+def weather_choose(message, day: int,city: str,token_accu: str):         
         latitude, longitude=geo_pos(city)
         cod_loc = code_location(latitude, longitude, token_accu)
         date, temperaturemin,temperaturemax ,feeltemperaturemin,feeltemperaturemax, precipitation, windspeed, winddir, phrase = weather_day(cod_loc, token_accu,day)
+        temperature= (temperaturemax+temperaturemin)/2
         murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         button16 = types.KeyboardButton("Узнать погоду")
         button17 = types.KeyboardButton("Настройки")
         button18 = types.KeyboardButton("Обратная связь")
         murkup.add(button16, button17, button18)
-        bot.send_message(message.chat.id,f"Сейчас в {city} {phrase}, {temperature}°C , ветер {winddir} {windspeed} м/с",reply_markup=murkup)"""
-
+        bot.send_message(message.chat.id,f"В городе {city} {phrase}, средняя температура {temperature}°C , ветер {winddir}"+" "+f"{windspeed} км/ч",reply_markup=murkup)
+        bot.register_next_step_handler(message, menu_weather)
     
     
 bot.polling(none_stop=True, interval=0) #бесконечный запрос у сервера телеграмма
+
+
+# In[ ]:
+
+
+
 
