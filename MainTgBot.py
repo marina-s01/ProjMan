@@ -9,9 +9,13 @@ import json
 import requests as req
 from telebot import types
 from geopy import geocoders
+<<<<<<< HEAD
 from geopy.geocoders import Nominatim
 from datetime import timedelta, datetime
 import requests
+=======
+from datetime import timedelta, datetime
+>>>>>>> eff0da84600443037ad006a8b7e5665263b80847
 bot = telebot.TeleBot('5688775484:AAFfcMbAm_t-qEOnuqanR63ivL4UJ-qJdeY') #переменная для работы с ботом через токен\
 token_accu="7pNet2S89J6HC7m6DdPIh5beY93ZhPOS" #  токены: GuL1TlbAFOb3BDTnqE88YwIWmHXyhXCn    7pNet2S89J6HC7m6DdPIh5beY93ZhPOS    o8bQ6kOLDIm242Z9wZqvderTlzk6ynVR
 
@@ -20,7 +24,10 @@ day2 = datetime.now()+timedelta(2)
 day3 = datetime.now()+timedelta(3)
 day4 = datetime.now()+timedelta(4)
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> eff0da84600443037ad006a8b7e5665263b80847
 def geo_pos(city: str): #получение координат через название города
     geolocator = geocoders.Nominatim(user_agent="telebot")
     latitude = str(geolocator.geocode(city).latitude)
@@ -61,7 +68,13 @@ def weather_day(cod_loc: str, token_accu: str,day: int):
     winddir=json_data['DailyForecasts'][day]['Day']['Wind']['Direction']['Localized']# направление ветра
     phrase=json_data['DailyForecasts'][day]['Day']['IconPhrase']#фраза о погоде, облачно и тп.
     return date, temperaturemin,temperaturemax ,feeltemperaturemin,feeltemperaturemax, precipitation, windspeed, winddir, phrase
+<<<<<<< HEAD
   
+=======
+
+
+    
+>>>>>>> eff0da84600443037ad006a8b7e5665263b80847
 #декоратор обработчика сообщений
 @bot.message_handler(commands=['start'])
 #Начальное приветствие
@@ -69,7 +82,11 @@ def send_welcome(message):
     #Кнопки
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button1 = types.KeyboardButton("Выбрать город")
+<<<<<<< HEAD
     button2 = types.KeyboardButton("Определить геолокацию", request_location=True)
+=======
+    button2 = types.KeyboardButton("Определить геолокацию", )
+>>>>>>> eff0da84600443037ad006a8b7e5665263b80847
     markup.add(button1, button2)	
     bot.reply_to(message, "Здравствуйте! \U0001F44B Добро пожаловать в бот CLOther. \U0001F321")
     bot.reply_to(message, "Здесь вы сможете получать погоду и рекомендации по одежде в нужном вам городе.")
@@ -79,6 +96,7 @@ city = ""
 cities = [
   "Бердск", "Барабинск", "Искитим",
   "Карасук", "Новосибирск", "Обь",
+<<<<<<< HEAD
   "Татарск", "Черепаново", "Тогучин"]
 
 Lat = ""
@@ -106,6 +124,12 @@ def handle_loc(message):
     
 #Коды: новосибирск-294459
     
+=======
+  "Татарск", "Черепаново", "Тогучин"
+    
+ #Коды: новосибирск-294459
+
+>>>>>>> eff0da84600443037ad006a8b7e5665263b80847
 #Работа с кнопками
 @bot.message_handler(content_types=['text'])
 def menu_one(message):
@@ -113,7 +137,19 @@ def menu_one(message):
         bot.send_message(message.from_user.id, 'Введите название города…Например, Новосибирск.')
         bot.register_next_step_handler(message, get_city)
     elif message.text == "Определить геолокацию":
+<<<<<<< HEAD
         bot.register_next_step_handler(message, handle_loc)
+=======
+        global city
+        city="Новосибирск"
+        murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        button10 = types.KeyboardButton("Узнать погоду")
+        button11 = types.KeyboardButton("Настройки")
+        button12 = types.KeyboardButton("Обратная связь")
+        murkup.add(button10, button11, button12)
+        bot.send_message(message.chat.id, "Отлично!", reply_markup=murkup)
+        bot.register_next_step_handler(message, menu_weather)
+>>>>>>> eff0da84600443037ad006a8b7e5665263b80847
 
 @bot.message_handler(content_types=['text'])
 def get_city(message): #получаем город
@@ -130,7 +166,11 @@ def get_city(message): #получаем город
     else:
         bot.send_message(message.from_user.id, 'Данного города нет в списке, попробуйте еще раз!')
         bot.register_next_step_handler(message, get_city)
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> eff0da84600443037ad006a8b7e5665263b80847
 #Основное меню
 @bot.message_handler(content_types=['text'])
 def menu_weather(message):
@@ -216,4 +256,12 @@ def weather_choose(message, day: int,city: str,token_accu: str):
 bot.polling(none_stop=True, interval=0) #бесконечный запрос у сервера телеграмма
 
 
+<<<<<<< HEAD
 # In[ ]:
+=======
+# In[ ]:
+
+
+
+
+>>>>>>> eff0da84600443037ad006a8b7e5665263b80847
