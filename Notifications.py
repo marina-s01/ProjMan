@@ -58,7 +58,6 @@ def job(chatid : str, city : str):    #функция отправки увед�
         date, temperaturemin,temperaturemax ,feeltemperaturemin,feeltemperaturemax, precipitation, windspeed, winddir, phrase = weather_day(cod_loc, token_accu)
         temperature=(temperaturemax+temperaturemin)/2
         bot.send_message(chatid,f"Уведомление: В городе {ct} {phrase}, средняя температура {temperature}°C, ветер {winddir}"+" "+f"{windspeed} км/ч")
-            
 
 while True:  #бесконечный цикл проверки времени, что бы отправлять уведомления
     df=pd.read_excel('./ntfDB.xlsx') # обновление датафрейма, если былы изменена информация

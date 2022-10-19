@@ -13,8 +13,6 @@ from geopy.geocoders import Nominatim
 from datetime import timedelta, datetime
 import requests
 from datetime import timedelta, datetime
-import pandas as pd
-import numpy as np
 bot = telebot.TeleBot('5688775484:AAFfcMbAm_t-qEOnuqanR63ivL4UJ-qJdeY') #переменная для работы с ботом через токен\
 token_accu="o8bQ6kOLDIm242Z9wZqvderTlzk6ynVR" #  токены: GuL1TlbAFOb3BDTnqE88YwIWmHXyhXCn    7pNet2S89J6HC7m6DdPIh5beY93ZhPOS    o8bQ6kOLDIm242Z9wZqvderTlzk6ynVR
 
@@ -52,13 +50,12 @@ def menu3():
     murkup.add(button9)
     return murkup
 
-#Меню Изменить город и Уведомления
+#Меню Изменить город
 def menu4():    
     murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button9 = types.KeyboardButton("Изменить город")
-    button17 = types.KeyboardButton("Уведомления")
     button10 = types.KeyboardButton("Главное меню")
-    murkup.add(button9, button17, button10)
+    murkup.add(button9, button10)
     return murkup
 
 #Меню Получить рекомендации
@@ -76,15 +73,8 @@ def menu6():
     button14 = types.KeyboardButton(day2.strftime("%d-%m-%Y"))
     button15 = types.KeyboardButton(day3.strftime("%d-%m-%Y"))
     button16 = types.KeyboardButton(day4.strftime("%d-%m-%Y"))
+   # button17 = types.KeyboardButton("Главное меню")
     murkup.add(button13, button14, button15, button16)
-    return murkup
-    
-#Меню Изменить город и Уведомления
-def menu7():    
-    murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    button18 = types.KeyboardButton("Выбрать время")
-    button19 = types.KeyboardButton("Отключить уведомления")
-    murkup.add(button18, button19)
     return murkup
 
 
@@ -207,35 +197,10 @@ def menu_weather(message):
         bot.register_next_step_handler(message, menu_weather)
 
 @bot.message_handler(content_types=['text'])
-def menu_notif(message):
-    chat_id = message.chat.id
-    if message.text == "Выбрать время":
-        print('Katya')
-    elif message.text == "Отключить уведомления":
-        df=pd.read_excel('./ntfDB.xlsx')
-        #print(df)
-        df = df.drop(np.where(df['id'] == chat_id)[0])
-        df.to_excel('./test.xlsx')
-        #print(df)   
-        df2=pd.read_excel('./test.xlsx')
-        df2=pd.read_excel('./test.xlsx')
-        df2.to_excel('./ntfDB.xlsx')
-        bot.send_message(message.chat.id, "Уведомления отключены!", reply_markup=menu1())  
-        bot.register_next_step_handler(message, menu_weather)
-    elif message.text == "Главное меню":
-       bot.send_message(message.chat.id, "Отлично!", reply_markup=menu1())
-       bot.register_next_step_handler(message, menu_weather)
-
-
-
-@bot.message_handler(content_types=['text'])
 def edit_city(message):
     if message.text == "Изменить город":
        bot.send_message(message.chat.id, "Давайте определим город, погода которого вас интересует, для этого воспользуйтесь кнопками ниже", reply_markup=menu2())
        bot.register_next_step_handler(message, menu_one)
-    elif message.text == "Уведомления":
-       bot.send_message(message.chat.id, "Отлично!", reply_markup=menu7())
-       bot.register_next_step_handler(message, menu_notif)
     elif message.text == "Главное меню":
        bot.send_message(message.chat.id, "Отлично!", reply_markup=menu1())
        bot.register_next_step_handler(message, menu_weather)
