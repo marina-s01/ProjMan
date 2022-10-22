@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[7]:
+# In[8]:
 
 
 import telebot; #библиотека для работы с телеграм-ботами
@@ -16,7 +16,7 @@ from datetime import timedelta, datetime, time
 import pandas as pd
 import numpy as np
 bot = telebot.TeleBot('5688775484:AAFfcMbAm_t-qEOnuqanR63ivL4UJ-qJdeY') #переменная для работы с ботом через токен\
-token_accu="o8bQ6kOLDIm242Z9wZqvderTlzk6ynVR" #  токены: GuL1TlbAFOb3BDTnqE88YwIWmHXyhXCn    7pNet2S89J6HC7m6DdPIh5beY93ZhPOS    o8bQ6kOLDIm242Z9wZqvderTlzk6ynVR
+token_accu="uioWSBHV0uUQ7kDF674rRPv0jfz3jWW3" # токены: uioWSBHV0uUQ7kDF674rRPv0jfz3jWW3    7pNet2S89J6HC7m6DdPIh5beY93ZhPOS    o8bQ6kOLDIm242Z9wZqvderTlzk6ynVR
 
 day1 = datetime.now()+timedelta(1)
 day2 = datetime.now()+timedelta(2)
@@ -200,7 +200,7 @@ def menu_weather(message):
         bot.send_message(message.chat.id, "Какая погода вас интересует? В данный момент или определенный?", reply_markup=menu3())
         bot.register_next_step_handler(message, send_weather)
     elif message.text == "Настройки":
-        bot.send_message(message.chat.id, "Укажите, погода которого вас интересует, для этого воспользуйтесь кнопками ниже", reply_markup=menu4())
+        bot.send_message(message.chat.id, "Выберите нужную кнопку", reply_markup=menu4())
         bot.register_next_step_handler(message, edit_city)
     elif message.text == "Обратная связь":
         bot.send_message(message.chat.id, "Отлично!", reply_markup=menu1())
@@ -228,7 +228,7 @@ def check_time(message):
         bot.send_message(message.from_user.id, 'Время уведомлений набрано неверно! Попробуйте еще раз')
         bot.register_next_step_handler(message, check_time)
     else:
-        df=pd.read_excel('./ntfDB.xlsx', index_col=0)
+        df=pd.read_excel('./ntfDB.xlsx')
         if any(df['id'] == user_id):
             idx = df.index[df['id'] == user_id]
             df['city'][idx] = city
@@ -245,35 +245,34 @@ def check_time(message):
 def menu_notif(message):
     chat_id = message.chat.id
     if message.text == "Выбрать время":
-        bot.send_message(message.from_user.id, 'Пожалуйста, введите время получения уведомлений согласно маске ##:##')
+        bot.send_message(message.from_user.id, 'Пожалуйста, введите время получения уведомлений согласно шаблону чч:мм')
         bot.register_next_step_handler(message, check_time)
     elif message.text == "Отключить уведомления":
-        df=pd.read_excel('./ntfDB.xlsx', index_col=0)
+        df=pd.read_excel('./ntfDB.xlsx')
         #print(df)
         df = df.drop(np.where(df['id'] == chat_id)[0])
-        df.to_excel('./test.xlsx', index=False)
+        df.to_excel('./test.xlsx', index=False)  
         #print(df)
-        df2=pd.read_excel('./test.xlsx', index_col=0)
-        df2=pd.read_excel('./test.xlsx', index_col=0)
+        df2=pd.read_excel('./test.xlsx')
         df2.to_excel('./ntfDB.xlsx', index=False)
         bot.send_message(message.chat.id, "Уведомления отключены!", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
     elif message.text == "Главное меню":
-       bot.send_message(message.chat.id, "Отлично!", reply_markup=menu1())
-       bot.register_next_step_handler(message, menu_weather)
+        bot.send_message(message.chat.id, "Отлично!", reply_markup=menu1())
+        bot.register_next_step_handler(message, menu_weather)
 
 
 @bot.message_handler(content_types=['text'])
 def edit_city(message):
     if message.text == "Изменить город":
-       bot.send_message(message.chat.id, "Давайте определим город, погода которого вас интересует, для этого воспользуйтесь кнопками ниже", reply_markup=menu2())
-       bot.register_next_step_handler(message, menu_one)
+        bot.send_message(message.chat.id, "Давайте определим город, погода которого вас интересует, для этого воспользуйтесь кнопками ниже", reply_markup=menu2())
+        bot.register_next_step_handler(message, menu_one)
     elif message.text == "Уведомления":
-       bot.send_message(message.chat.id, "Отлично!", reply_markup=menu7())
-       bot.register_next_step_handler(message, menu_notif)
+        bot.send_message(message.chat.id, "Отлично!", reply_markup=menu7())
+        bot.register_next_step_handler(message, menu_notif)
     elif message.text == "Главное меню":
-       bot.send_message(message.chat.id, "Отлично!", reply_markup=menu1())
-       bot.register_next_step_handler(message, menu_weather)
+        bot.send_message(message.chat.id, "Отлично!", reply_markup=menu1())
+        bot.register_next_step_handler(message, menu_weather)
 
 @bot.message_handler(content_types=['text'])
 def send_weather(message):
@@ -491,3 +490,16 @@ def rec2(message):
         bot.register_next_step_handler(message, menu_weather)
 
 bot.polling(none_stop=True, interval=0) #бесконечный запрос у сервера телеграмма
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
