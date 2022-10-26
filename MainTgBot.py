@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[7]:
+# In[8]:
 
 
 import telebot; #библиотека для работы с телеграм-ботами
@@ -16,7 +16,7 @@ from datetime import timedelta, datetime, time
 import pandas as pd
 import numpy as np
 bot = telebot.TeleBot('5688775484:AAFfcMbAm_t-qEOnuqanR63ivL4UJ-qJdeY') #переменная для работы с ботом через токен\
-token_accu="o8bQ6kOLDIm242Z9wZqvderTlzk6ynVR" #  токены: GuL1TlbAFOb3BDTnqE88YwIWmHXyhXCn    7pNet2S89J6HC7m6DdPIh5beY93ZhPOS    o8bQ6kOLDIm242Z9wZqvderTlzk6ynVR
+token_accu="uioWSBHV0uUQ7kDF674rRPv0jfz3jWW3" # токены: uioWSBHV0uUQ7kDF674rRPv0jfz3jWW3    7pNet2S89J6HC7m6DdPIh5beY93ZhPOS    o8bQ6kOLDIm242Z9wZqvderTlzk6ynVR
 
 day1 = datetime.now()+timedelta(1)
 day2 = datetime.now()+timedelta(2)
@@ -31,7 +31,7 @@ def menu1():
     button3 = types.KeyboardButton("Обратная связь")
     murkup.add(button1, button2, button3)
     return murkup
-    
+
 #Меню Выбрать город, определить геолокацию
 def menu2():
     murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -40,9 +40,9 @@ def menu2():
     button6 = types.KeyboardButton("Главное меню")
     murkup.add(button4, button5, button6)
     return murkup
-    
+
 #Меню Узнать погоду сейчас и по времени
-def menu3():    
+def menu3():
     murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button7 = types.KeyboardButton("Узнать погоду сейчас")
     button8 = types.KeyboardButton("Узнать погоду по времени")
@@ -53,7 +53,7 @@ def menu3():
     return murkup
 
 #Меню Изменить город и Уведомления
-def menu4():    
+def menu4():
     murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button9 = types.KeyboardButton("Изменить город")
     button17 = types.KeyboardButton("Уведомления")
@@ -62,15 +62,15 @@ def menu4():
     return murkup
 
 #Меню Получить рекомендации
-def menu5():    
-    murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)   
+def menu5():
+    murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button11 = types.KeyboardButton("Получить рекомендации одежды")
     button12 = types.KeyboardButton("Главное меню")
     murkup.add(button11, button12)
     return murkup
 
 #Меню Выбор дня
-def menu6():    
+def menu6():
     murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button13 = types.KeyboardButton(day1.strftime("%d-%m-%Y"))
     button14 = types.KeyboardButton(day2.strftime("%d-%m-%Y"))
@@ -78,13 +78,33 @@ def menu6():
     button16 = types.KeyboardButton(day4.strftime("%d-%m-%Y"))
     murkup.add(button13, button14, button15, button16)
     return murkup
-    
+
 #Меню Изменить город и Уведомления
-def menu7():    
+def menu7():
     murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button18 = types.KeyboardButton("Выбрать время")
     button19 = types.KeyboardButton("Отключить уведомления")
     murkup.add(button18, button19)
+    return murkup
+
+#Меню Обратная связь
+def menu_otz():
+    murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    button_otz1 = types.KeyboardButton("Оценить бота")
+    button_otz2 = types.KeyboardButton("Написать рекомендации")
+    button_otz3 = types.KeyboardButton("Пройти опрос")
+    button_otz4 = types.KeyboardButton("Главное меню")
+    murkup.add(button_otz1, button_otz2, button_otz3, button_otz4)
+    return murkup
+
+def menu_otcenka():
+    murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    button_1 = types.KeyboardButton("1")
+    button_2 = types.KeyboardButton("2")
+    button_3 = types.KeyboardButton("3")
+    button_4 = types.KeyboardButton("4")
+    button_5 = types.KeyboardButton("5")
+    murkup.add(button_1, button_2, button_3, button_4, button_5)
     return murkup
 
 
@@ -178,9 +198,9 @@ def menu_one(message):
     #   bot.send_message(message.chat.id, "Отлично!", reply_markup=menu1())
     #   bot.register_next_step_handler(message, menu_weather)
     elif message.text == "Главное меню":
-        bot.send_message(message.chat.id, "Отлично!", reply_markup=menu1())
+        bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
-    
+
 
 @bot.message_handler(content_types=['text'])
 def get_city(message): #получаем город
@@ -200,11 +220,11 @@ def menu_weather(message):
         bot.send_message(message.chat.id, "Какая погода вас интересует? В данный момент или определенный?", reply_markup=menu3())
         bot.register_next_step_handler(message, send_weather)
     elif message.text == "Настройки":
-        bot.send_message(message.chat.id, "Укажите, погода которого вас интересует, для этого воспользуйтесь кнопками ниже", reply_markup=menu4())
+        bot.send_message(message.chat.id, "Выберите нужную кнопку", reply_markup=menu4())
         bot.register_next_step_handler(message, edit_city)
     elif message.text == "Обратная связь":
-        bot.send_message(message.chat.id, "Отлично!", reply_markup=menu1())  
-        bot.register_next_step_handler(message, menu_weather)
+        bot.send_message(message.chat.id, "Мы всегда работаем над тем, чтобы вам было удобно пользоваться нашим ботом, поэтому обратная связь нам очень важна!☺️  Чтобы оценить качество бота, написать рекомендацию или пройти опрос, выберите необходимую кнопку ниже👇🏻", reply_markup=menu_otz())
+        bot.register_next_step_handler(message, obr_sv)
 
 #Проверка записи времени
 @bot.message_handler(content_types=['text'])
@@ -226,11 +246,11 @@ def check_time(message):
     final_time = check(ntftime)
     if final_time == False:
         bot.send_message(message.from_user.id, 'Время уведомлений набрано неверно! Попробуйте еще раз')
-        bot.register_next_step_handler(message, check_time) 
+        bot.register_next_step_handler(message, check_time)
     else:
-        df=pd.read_excel('./ntfDB.xlsx', index_col=0)
+        df=pd.read_excel('./ntfDB.xlsx')
         if any(df['id'] == user_id):
-            idx = df.index[df['id'] == user_id] 
+            idx = df.index[df['id'] == user_id]
             df['city'][idx] = city
             df['ntftime'][idx] = ntftime
             df.to_excel('./ntfDB.xlsx')
@@ -240,40 +260,39 @@ def check_time(message):
             df.to_excel('./ntfDB.xlsx', index=False)
         bot.send_message(message.chat.id, 'Время уведомлений успешно выбрано!', reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
-        
+
 @bot.message_handler(content_types=['text'])
 def menu_notif(message):
     chat_id = message.chat.id
     if message.text == "Выбрать время":
-        bot.send_message(message.from_user.id, 'Пожалуйста, введите время получения уведомлений согласно маске ##:##')
-        bot.register_next_step_handler(message, check_time)           
+        bot.send_message(message.from_user.id, 'Пожалуйста, введите время получения уведомлений согласно шаблону чч:мм')
+        bot.register_next_step_handler(message, check_time)
     elif message.text == "Отключить уведомления":
-        df=pd.read_excel('./ntfDB.xlsx', index_col=0)
+        df=pd.read_excel('./ntfDB.xlsx')
         #print(df)
         df = df.drop(np.where(df['id'] == chat_id)[0])
         df.to_excel('./test.xlsx', index=False)
-        #print(df)   
-        df2=pd.read_excel('./test.xlsx', index_col=0)
-        df2=pd.read_excel('./test.xlsx', index_col=0)
+        #print(df)
+        df2=pd.read_excel('./test.xlsx')
         df2.to_excel('./ntfDB.xlsx', index=False)
-        bot.send_message(message.chat.id, "Уведомления отключены!", reply_markup=menu1())  
+        bot.send_message(message.chat.id, "Уведомления отключены!", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
     elif message.text == "Главное меню":
-       bot.send_message(message.chat.id, "Отлично!", reply_markup=menu1())
-       bot.register_next_step_handler(message, menu_weather)
+        bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
+        bot.register_next_step_handler(message, menu_weather)
 
 
 @bot.message_handler(content_types=['text'])
 def edit_city(message):
     if message.text == "Изменить город":
-       bot.send_message(message.chat.id, "Давайте определим город, погода которого вас интересует, для этого воспользуйтесь кнопками ниже", reply_markup=menu2())
-       bot.register_next_step_handler(message, menu_one)
+        bot.send_message(message.chat.id, "Давайте определим город, погода которого вас интересует, для этого воспользуйтесь кнопками ниже", reply_markup=menu2())
+        bot.register_next_step_handler(message, menu_one)
     elif message.text == "Уведомления":
-       bot.send_message(message.chat.id, "Отлично!", reply_markup=menu7())
-       bot.register_next_step_handler(message, menu_notif)
+        bot.send_message(message.chat.id, "Отлично!", reply_markup=menu7())
+        bot.register_next_step_handler(message, menu_notif)
     elif message.text == "Главное меню":
-       bot.send_message(message.chat.id, "Отлично!", reply_markup=menu1())
-       bot.register_next_step_handler(message, menu_weather)
+        bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
+        bot.register_next_step_handler(message, menu_weather)
 
 @bot.message_handler(content_types=['text'])
 def send_weather(message):
@@ -289,31 +308,36 @@ def send_weather(message):
         bot.send_message(message.chat.id, "Выберите день", reply_markup=menu6())
         bot.register_next_step_handler(message, menu_day)
     elif message.text == "Главное меню":
-        bot.send_message(message.chat.id, "Отлично!", reply_markup=menu1())  
+        bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
 
 
 @bot.message_handler(content_types=['text'])     #выбор дня, не позднее 5 дней с сегодняшнего дня, и поиск разницы с сегодняшней датой
 def menu_day(message):
+    global day_rec
     if message.text == day1.strftime("%d-%m-%Y"):
-        murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        #murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         day=1
-        bot.send_message(message.chat.id, "Отлично!", reply_markup=menu6())
+        day_rec = 1
+        #bot.send_message(message.chat.id, "Отлично!", reply_markup=menu6())
         weather_choose(message, day,city,token_accu)
     elif message.text == day2.strftime("%d-%m-%Y"):
-        murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        #murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         day=2
-        bot.send_message(message.chat.id, "Отлично!", reply_markup=menu6())
+        day_rec = 2
+        #bot.send_message(message.chat.id, "Отлично!", reply_markup=menu6())
         weather_choose(message, day,city,token_accu)
     elif message.text == day3.strftime("%d-%m-%Y"):
-        murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        #murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         day=3
-        bot.send_message(message.chat.id, "Отлично! ", reply_markup=menu6())
+        day_rec = 3
+        #bot.send_message(message.chat.id, "Отлично! ", reply_markup=menu6())
         weather_choose(message, day,city,token_accu)
     elif message.text == day4.strftime("%d-%m-%Y"):
-        murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        #murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         day=4
-        bot.send_message(message.chat.id, "Отлично!  ", reply_markup=menu6())
+        day_rec = 4
+        #bot.send_message(message.chat.id, "Отлично!  ", reply_markup=menu6())
         weather_choose(message, day,city,token_accu)
     else: bot.send_message(message.from_user.id, 'Упс! Ошибочка!')
 
@@ -401,13 +425,213 @@ def rec(message):
                     bot.send_message(message.chat.id,"Сейчас отличная погода!🙃Предлагаем вам надеть футболку👕 и шорты🩳, а также не забудьте очки🕶 и кепку🧢 или шляпу👒",reply_markup=menu5())
 
     elif message.text == "Главное меню":
-        bot.send_message(message.chat.id, "Отлично!", reply_markup=menu1())  
+        bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
 
 @bot.message_handler(content_types=['text']) #вывод рекомендаций по одежде после нажатия кнопки "погода по времени"
 def rec2(message):
     if message.text == "Получить рекомендации одежды":
-        bot.send_message(message.chat.id,"Какая-то рекомендация",reply_markup=menu1())
+        latitude, longitude=geo_pos(city)
+        cod_loc = code_location(latitude, longitude, token_accu)
+        date, temperaturemin,temperaturemax ,feeltemperaturemin,feeltemperaturemax, precipitation, windspeed, winddir, phrase = weather_day(cod_loc, token_accu,day_rec)
+        feeltemperature = (feeltemperaturemax+feeltemperaturemin)/2
+        date = date[:10]
+
+        if feeltemperature <= -20:
+            if precipitation > 60:
+                if windspeed >= 36:
+                    bot.send_message(message.chat.id,f"{date} на улице будет очень холодно и метель!🌬❄️ Наденьте термобелье, пуховик🧥, головной убор🎩, закрывающий уши , теплые ботинки👢, варежки🧤, шарф🧣 и шерстяные носки🧦",reply_markup=menu5())
+                if windspeed < 36:
+                    bot.send_message(message.chat.id,f"{date} на улице будет очень холодно и идет снег!❄️ Наденьте термобелье, пуховик🧥, головной убор🎩, закрывающий уши , теплые ботинки👢, варежки🧤, шарф🧣 и шерстяные носки🧦",reply_markup=menu5())
+            else:
+                if windspeed >= 36:
+                    bot.send_message(message.chat.id,f"{date} на улице будет очень холодно!☃️ Наденьте термобелье, пуховик🧥, головной убор🎩, закрывающий уши , теплые ботинки👢, варежки🧤, шарф🧣 и шерстяные носки🧦",reply_markup=menu5())
+                if windspeed < 36:
+                    bot.send_message(message.chat.id,f"{date} на улице будет очень холодно!☃️ Наденьте термобелье, пуховик🧥, головной убор🎩, закрывающий уши , теплые ботинки👢, варежки🧤 и шерстяные носки🧦",reply_markup=menu5())
+        if feeltemperature > -20 and feeltemperature <= -10:
+            if precipitation > 60:
+                if windspeed >= 36:
+                    bot.send_message(message.chat.id,f"{date} на улице будет холодно и метель!🌬❄️ Наденьте пуховик🧥, головной убор🎩, теплые ботинки🥾, варежки🧤, шарф🧣 и шерстяные носки🧦",reply_markup=menu5())
+                if windspeed < 36:
+                    bot.send_message(message.chat.id,f"{date} на улице будет холодно и  снег!❄️ Наденьте пуховик🧥, головной убор🎩, теплые ботинки🥾, варежки🧤 и шерстяные носки🧦",reply_markup=menu5())
+            else:
+                if windspeed >= 36:
+                    bot.send_message(message.chat.id,f"{date} на улице будет холодно!☃️ Наденьте пуховик🧥, головной убор🎩, теплые ботинки🥾, варежки🧤, шарф🧣 и шерстяные носки🧦",reply_markup=menu5())
+                if windspeed < 36:
+                    bot.send_message(message.chat.id,f"{date} на улице будет холодно!☃️ Наденьте пуховик🧥, головной убор🎩, теплые ботинки🥾, варежки🧤 и шерстяные носки🧦",reply_markup=menu5())
+        if feeltemperature > -10 and feeltemperature <= 0:
+            if precipitation > 60:
+                if windspeed >= 36:
+                    bot.send_message(message.chat.id,f"{date} на улице будет холодно и метель! ⛄️ Наденьте теплую куртку🥼, шапку🎩, теплые ботинки👞 , перчатки🧤  и шарф🧣",reply_markup=menu5())
+                if windspeed < 36:
+                    bot.send_message(message.chat.id,f"{date} на улице будет холодно и  снег! ⛄️ Наденьте теплую куртку🥼, шапку🎩, теплые ботинки👞 и  перчатки🧤",reply_markup=menu5())
+            else:
+                if windspeed >= 36:
+                    bot.send_message(message.chat.id,f"{date} на улице будет холодно! ⛄️ Наденьте теплую куртку🥼, шапку🎩, теплые ботинки👞 , перчатки🧤  и шарф🧣",reply_markup=menu5())
+                if windspeed < 36:
+                    bot.send_message(message.chat.id,f"{date} на улице будет холодно! ⛄️ Наденьте теплую куртку🥼, шапку🎩, теплые ботинки👞 и  перчатки🧤",reply_markup=menu5())
+        if feeltemperature > 0 and feeltemperature <= 10:
+            if precipitation > 60:
+                if windspeed >= 36:
+                    bot.send_message(message.chat.id,f"{date} будет дождь и сильный ветер!🌧🌬Предлагаем вам надеть куртку🥋 и ботинки👞, а также не забудьте взять дождевик!",reply_markup=menu5())
+                if windspeed < 36:
+                    bot.send_message(message.chat.id,f"{date} будет дождь!🌧 Предлагаем вам надеть куртку🥋 и ботинки👞, а также не забудьте взять зонтик!☔️",reply_markup=menu5())
+            else:
+                if windspeed >= 36:
+                    bot.send_message(message.chat.id,f"{date} на улице будет сильный ветер!🌬 Предлагаем вам надеть пальто🥋, ботинки👞 и не забудьте шарф🧣",reply_markup=menu5())
+                if windspeed < 36:
+                    bot.send_message(message.chat.id,f"{date} без осадков!🌬 Предлагаем вам надеть пальто🥋 и ботинки👞",reply_markup=menu5())
+        if feeltemperature > 10 and feeltemperature <= 15:
+            if precipitation > 60:
+                if windspeed >= 36:
+                    bot.send_message(message.chat.id,f"{date} будет очень ветрено и  дождь!🌬🌧 Предлагаем вам надеть свитер🦺 и джинсы👖, а также не забудьте взять дождевик!",reply_markup=menu5())
+                if windspeed < 36:
+                    bot.send_message(message.chat.id,f"{date} будет дождь!🌧 Предлагаем вам надеть водолазку и джинсы👖, а также не забудьте взять зонтик!☔️",reply_markup=menu5())
+            else:
+                if windspeed >= 36:
+                    bot.send_message(message.chat.id,f"{date} будет очень ветрено!🌬 Предлагаем вам надеть свитер🦺 и джинсы👖",reply_markup=menu5())
+                if windspeed < 36:
+                    bot.send_message(message.chat.id,f"{date} будет хорошая погода!🤗Предлагаем вам надеть водолазку и джинсы👖",reply_markup=menu5())
+        if feeltemperature > 15:
+            if precipitation > 60:
+                if windspeed >= 36:
+                    bot.send_message(message.chat.id,f"{date} будет дождь!🌧 Предлагаем вам надеть футболку👕 и джинсы👖, а также не забудьте взять дождевик!☔️",reply_markup=menu5())
+                if windspeed < 36:
+                    bot.send_message(message.chat.id,f"{date}  тепло, но будет дождь!🌧 Предлагаем вам надеть футболку👕 и джинсы👖, а также не забудьте взять зонтик!☔️",reply_markup=menu5())
+            else:
+                if windspeed >= 36:
+                    bot.send_message(message.chat.id,f"{date} будет жаркая погода! 🙃Предлагаем вам надеть футболку👕 и шорты🩳, а также не забудьте очки🕶 и кепку🧢 или шляпу👒",reply_markup=menu5())
+                if windspeed < 36:
+                    bot.send_message(message.chat.id,f"{date} будет отличная погода!🙃Предлагаем вам надеть футболку👕 и шорты🩳, а также не забудьте очки🕶 и кепку🧢 или шляпу👒",reply_markup=menu5())
+        #bot.register_next_step_handler(message, menu_weather)
+
+    elif message.text == "Главное меню":
+        bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
+        
+#comfort_menu = ''
+#recommend_true = ''
+#weather_true = ''
+#add_city = ''
+#user_id = ''
+
+#кнопки да/нет
+def yes_no_buttons():
+    murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    button1  = types.KeyboardButton("Да")
+    button2  = types.KeyboardButton("Нет")
+    murkup.add(button1, button2)
+    return murkup    
+
+#oпрос ответ 1 - вопрос 2
+@bot.message_handler(content_types=['text'])
+def question_two(message):
+    global comfort_menu
+    if message.text == "Да":
+        comfort_menu = "Да"
+    else:
+        comfort_menu = "Нет"
+    bot.send_message(message.chat.id,"2.Верно ли наш бот составляет рекомендации по одежде для вас?", reply_markup=yes_no_buttons())
+    bot.register_next_step_handler(message, question_three)
+
+#oпрос ответ 2 - вопрос 3
+@bot.message_handler(content_types=['text'])
+def question_three(message):
+    global recommend_true
+    if message.text == "Да":
+        recommend_true = "Да"
+    else:
+        recommend_true = "Нет"
+    bot.send_message(message.chat.id,"3.Верно ли бот показывает погоду в вашем городе?", reply_markup=yes_no_buttons())
+    bot.register_next_step_handler(message, question_four)
+    
+#oпрос ответ 3 - вопрос 4
+@bot.message_handler(content_types=['text'])
+def question_four(message):
+    global weather_true
+    if message.text == "Да":
+        weather_true = "Да"
+    else:
+        weather_true = "Нет"
+    bot.send_message(message.chat.id,"4.Получилось ли у вас добавить ваш город?", reply_markup=yes_no_buttons())
+    bot.register_next_step_handler(message, question_final)
+
+#oпрос ответ 4
+@bot.message_handler(content_types=['text'])
+def question_final(message):
+    user_id = message.from_user.id
+    global add_city
+    if message.text == "Да":
+        add_city = "Да"
+    else:
+        add_city = "Нет"
+    df=pd.read_excel('./interview.xlsx')
+    day = datetime.now()
+    date=day.strftime("%d-%m-%Y")
+    if any((df['id'] == user_id) & (df['date'] == date)):
+        idx = df.index[df['id'] == user_id]
+        df['comfort_menu'][idx] = comfort_menu
+        df['recommend_true'][idx] = recommend_true
+        df['weather_true'][idx] = weather_true
+        df['add_city'][idx] = add_city
+    else:
+        new_row = {'id':user_id, 'comfort_menu':comfort_menu, 'recommend_true':recommend_true,'weather_true':weather_true, 'add_city':add_city, 'date':date}
+        df = df.append(new_row, ignore_index=True)
+    df.to_excel('./interview.xlsx', index=False)
+    bot.send_message(message.chat.id, "Спасибо за уделенное время, Ваше мнение очень значимо для нас \U0001F9D0! Ваша оценка позволит выбрать правильное направление в работе над улучшением качества нашего бота \U0001F917!", reply_markup=menu1())
+    bot.register_next_step_handler(message, menu_weather)
+
+@bot.message_handler(content_types=['text']) #вывод рекомендаций по одежде после нажатия кнопки "погода по времени"
+def obr_sv(message):
+    if message.text == "Оценить бота":
+        bot.send_message(message.chat.id, "Поставьте оценку нашему боту от 1 до 5. Ответ пришлите в виде сообщения", reply_markup=menu_otcenka())
+        bot.register_next_step_handler(message, ocenka)
+    elif message.text == "Написать рекомендации":
+        bot.send_message(message.chat.id,"функция 3")
+    elif message.text == "Пройти опрос":
+        bot.send_message(message.chat.id,"Спасибо, что согласились пройти наш опрос 🤗! Всего будет четыре вопроса, что займет у вас всего пару минут \U0001F64F")
+        bot.send_message(message.chat.id,"1.Удобен ли интерфейс и меню нашего бота для вас?", reply_markup=yes_no_buttons())
+        bot.register_next_step_handler(message, question_two)
+    elif message.text == "Главное меню":
+        bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
+        bot.register_next_step_handler(message, menu_weather)
+    else:
+        bot.send_message(message.chat.id, "Выбери кнопку!", reply_markup=menu_otz())
+        bot.register_next_step_handler(message, obr_sv)
+
+@bot.message_handler(content_types=['text']) #вывод рекомендаций по одежде после нажатия кнопки "погода по времени"
+def ocenka(message):
+    if int(message.text) in (1,2,3,4,5):
+        if message.text == "1":
+            o = 1
+            bot.send_message(message.chat.id, "Очень жаль, что вы поставили такую оценку!😞 Если вас не затруднит, то пройдите опрос и напишите нам рекомендацию, чтобы мы знали, что необходимо изменить.😇")
+        elif message.text == "2":
+            o = 2
+            bot.send_message(message.chat.id, "Очень жаль, что вы поставили такую оценку!😞 Если вас не затруднит, то пройдите опрос и напишите нам рекомендацию, чтобы мы знали, что необходимо изменить.😇")
+        elif message.text == "3":
+            o = 3
+            bot.send_message(message.chat.id, "Спасибо за ваше мнение, будем рады, если вы пройдите опрос и напишите нам рекомендацию, чтобы мы знали, что необходимо улучшить.🙂")
+        elif message.text == "4":
+            o = 4
+            bot.send_message(message.chat.id, "Спасибо за ваше мнение, будем рады, если вы пройдите опрос и напишите нам рекомендацию, чтобы мы знали, что необходимо улучшить.🙂")
+        elif message.text == "5":
+            o = 5
+            bot.send_message(message.chat.id, "Большое спасибо за такую высокую оценку!🥰 Рады стараться для вас.")
+        user_id = message.from_user.id
+        df=pd.read_excel('./obrSvyaz.xlsx')
+        if any(df['id'] == user_id):
+            idx = df.index[df['id'] == user_id]
+            df['оценка'][idx] = o
+            df.to_excel('./obrSvyaz.xlsx')
+        else:
+            new_row = {'id':user_id, 'оценка':o}
+            df = df.append(new_row, ignore_index=True)
+            df.to_excel('./obrSvyaz.xlsx', index=False)
+        bot.send_message(message.chat.id, 'Ваша оценка учтена!', reply_markup=menu1())
+        bot.register_next_step_handler(message, menu_weather)
+    else:
+        bot.send_message(message.from_user.id, 'Введите оценку от 1 до 5!',reply_markup=menu_otcenka())
+        bot.register_next_step_handler(message, ocenka)
+
 
 bot.polling(none_stop=True, interval=0) #бесконечный запрос у сервера телеграмма
