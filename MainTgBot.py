@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[8]:
+# In[4]:
 
 
 import telebot; #библиотека для работы с телеграм-ботами
@@ -84,7 +84,8 @@ def menu7():
     murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button18 = types.KeyboardButton("Выбрать время")
     button19 = types.KeyboardButton("Отключить уведомления")
-    murkup.add(button18, button19)
+    button_back = types.KeyboardButton("Главное меню")
+    murkup.add(button18, button19, button_back)
     return murkup
 
 #Меню Обратная связь
@@ -104,7 +105,8 @@ def menu_otcenka():
     button_3 = types.KeyboardButton("3")
     button_4 = types.KeyboardButton("4")
     button_5 = types.KeyboardButton("5")
-    murkup.add(button_1, button_2, button_3, button_4, button_5)
+    buttonback =types.KeyboardButton("Главное меню")
+    murkup.add(button_1, button_2, button_3, button_4, button_5, buttonback)
     return murkup
 
 
@@ -578,7 +580,7 @@ def question_final(message):
         new_row = {'id':user_id, 'comfort_menu':comfort_menu, 'recommend_true':recommend_true,'weather_true':weather_true, 'add_city':add_city, 'date':date}
         df = df.append(new_row, ignore_index=True)
     df.to_excel('./interview.xlsx', index=False)
-    bot.send_message(message.chat.id, "Спасибо за уделенное время, Ваше мнение очень значимо для нас \U0001F9D0! Ваша оценка позволит выбрать правильное направление в работе над улучшением качества нашего бота \U0001F917!", reply_markup=menu1())
+    bot.send_message(message.chat.id, "Спасибо за уделенное время, Ваше мнение очень значимо для нас \U0001F9D0! Ваша оценка позволит выбрать правильное направление в работе над улучшением качества нашего бота \U0001F917! Если вы где то выбрали нет, просим вас написать рекомендации, что бы вы хотели увидеть.", reply_markup=menu1())
     bot.register_next_step_handler(message, menu_weather)
 
 @bot.message_handler(content_types=['text']) #вывод рекомендаций по одежде после нажатия кнопки "погода по времени"
@@ -601,7 +603,10 @@ def obr_sv(message):
 
 @bot.message_handler(content_types=['text']) #вывод рекомендаций по одежде после нажатия кнопки "погода по времени"
 def ocenka(message):
-    if int(message.text) in (1,2,3,4,5):
+    if message.text == "Главное меню":
+        bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
+        bot.register_next_step_handler(message, menu_weather)
+    elif int(message.text) in (1,2,3,4,5):
         if message.text == "1":
             o = 1
             bot.send_message(message.chat.id, "Очень жаль, что вы поставили такую оценку!😞 Если вас не затруднит, то пройдите опрос и напишите нам рекомендацию, чтобы мы знали, что необходимо изменить.😇")
@@ -616,7 +621,7 @@ def ocenka(message):
             bot.send_message(message.chat.id, "Спасибо за ваше мнение, будем рады, если вы пройдите опрос и напишите нам рекомендацию, чтобы мы знали, что необходимо улучшить.🙂")
         elif message.text == "5":
             o = 5
-            bot.send_message(message.chat.id, "Большое спасибо за такую высокую оценку!🥰 Рады стараться для вас.")
+            bot.send_message(message.chat.id, "Большое спасибо за такую высокую оценку!🥰 Рады стараться для вас.")     
         user_id = message.from_user.id
         df=pd.read_excel('./obrSvyaz.xlsx')
         if any(df['id'] == user_id):
@@ -635,3 +640,16 @@ def ocenka(message):
 
 
 bot.polling(none_stop=True, interval=0) #бесконечный запрос у сервера телеграмма
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
