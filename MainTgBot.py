@@ -510,7 +510,7 @@ def rec2(message):
     elif message.text == "Главное меню":
         bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
-        
+
 #comfort_menu = ''
 #recommend_true = ''
 #weather_true = ''
@@ -523,7 +523,7 @@ def yes_no_buttons():
     button1  = types.KeyboardButton("Да")
     button2  = types.KeyboardButton("Нет")
     murkup.add(button1, button2)
-    return murkup    
+    return murkup
 
 #oпрос ответ 1 - вопрос 2
 @bot.message_handler(content_types=['text'])
@@ -546,7 +546,7 @@ def question_three(message):
         recommend_true = "Нет"
     bot.send_message(message.chat.id,"3.Верно ли бот показывает погоду в вашем городе?", reply_markup=yes_no_buttons())
     bot.register_next_step_handler(message, question_four)
-    
+
 #oпрос ответ 3 - вопрос 4
 @bot.message_handler(content_types=['text'])
 def question_four(message):
@@ -606,7 +606,7 @@ def ocenka(message):
     if message.text == "Главное меню":
         bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
-    elif int(message.text) in (1,2,3,4,5):
+    elif message.text==1 or  message.text == "2" or message.text == "3" or message.text == "4" or message.text == "5":
         if message.text == "1":
             o = 1
             bot.send_message(message.chat.id, "Очень жаль, что вы поставили такую оценку!😞 Если вас не затруднит, то пройдите опрос и напишите нам рекомендацию, чтобы мы знали, что необходимо изменить.😇")
@@ -621,7 +621,8 @@ def ocenka(message):
             bot.send_message(message.chat.id, "Спасибо за ваше мнение, будем рады, если вы пройдите опрос и напишите нам рекомендацию, чтобы мы знали, что необходимо улучшить.🙂")
         elif message.text == "5":
             o = 5
-            bot.send_message(message.chat.id, "Большое спасибо за такую высокую оценку!🥰 Рады стараться для вас.")     
+            bot.send_message(message.chat.id, "Большое спасибо за такую высокую оценку!🥰 Рады стараться для вас.")
+
         user_id = message.from_user.id
         df=pd.read_excel('./obrSvyaz.xlsx')
         if any(df['id'] == user_id):
@@ -635,7 +636,7 @@ def ocenka(message):
         bot.send_message(message.chat.id, 'Ваша оценка учтена!', reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
     else:
-        bot.send_message(message.from_user.id, 'Введите оценку от 1 до 5!',reply_markup=menu_otcenka())
+        bot.send_message(message.from_user.id, 'Введите целое число от 1 до 5!',reply_markup=menu_otcenka())
         bot.register_next_step_handler(message, ocenka)
 
 
@@ -649,7 +650,3 @@ bot.polling(none_stop=True, interval=0) #бесконечный запрос у 
 
 
 # In[ ]:
-
-
-
-
