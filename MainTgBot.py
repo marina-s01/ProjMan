@@ -66,7 +66,8 @@ def menu5():
     murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button11 = types.KeyboardButton("Получить рекомендации одежды")
     button12 = types.KeyboardButton("Главное меню")
-    murkup.add(button11, button12)
+    murkup.add(button11)
+    murkup.add(button12)
     return murkup
 
 #Меню Выбор дня
@@ -79,7 +80,7 @@ def menu6():
     murkup.add(button13, button14, button15, button16)
     return murkup
 
-#Меню Изменить город и Уведомления
+#Меню Выбрать время и отключить уведомления
 def menu7():
     murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button18 = types.KeyboardButton("Выбрать время")
@@ -167,7 +168,7 @@ def send_welcome(message):
     bot.reply_to(message, "Здравствуйте! \U0001F44B Добро пожаловать в бот CLOther. \U0001F321")
     bot.reply_to(message, "Здесь вы сможете получать погоду и рекомендации по одежде в нужном вам городе.")
     bot.reply_to(message, "Давайте определим город, погода которого вас интересует, для этого воспользуйтесь кнопками ниже \U0001F447", reply_markup=menu2())
-
+    bot.register_next_step_handler(message, menu_one)
 
 city = ""
 cities = [
@@ -210,6 +211,9 @@ def menu_one(message):
     elif message.text == "Главное меню":
         bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
+    else: 
+        bot.send_message(message.chat.id, "Вы ввели некорректное сообщение. Выберите пункт из меню!", reply_markup=menu2())
+        bot.register_next_step_handler(message, menu_one)
 
 
 @bot.message_handler(content_types=['text'])
@@ -235,6 +239,11 @@ def menu_weather(message):
     elif message.text == "Обратная связь":
         bot.send_message(message.chat.id, "Мы всегда работаем над тем, чтобы вам было удобно пользоваться нашим ботом, поэтому обратная связь нам очень важна!☺️  Чтобы оценить качество бота, написать рекомендацию или пройти опрос, выберите необходимую кнопку ниже👇🏻", reply_markup=menu_otz())
         bot.register_next_step_handler(message, obr_sv)
+    elif message.text == "/start":
+        bot.register_next_step_handler(message, send_welcome)
+    else:
+        bot.send_message(message.chat.id, "Вы ввели некорректное сообщение. Выберите пункт из меню!", reply_markup=menu1())
+        bot.register_next_step_handler(message, menu_weather)
 
 #Проверка записи времени
 @bot.message_handler(content_types=['text'])
@@ -290,6 +299,9 @@ def menu_notif(message):
     elif message.text == "Главное меню":
         bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
+    else:
+        bot.send_message(message.chat.id, "Вы ввели некорректное сообщение. Выберите пункт из меню!", reply_markup=menu7())
+        bot.register_next_step_handler(message, menu_notif)
 
 
 @bot.message_handler(content_types=['text'])
@@ -303,6 +315,9 @@ def edit_city(message):
     elif message.text == "Главное меню":
         bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
+    else:
+        bot.send_message(message.chat.id, "Вы ввели некорректное сообщение. Выберите пункт из меню!", reply_markup=menu4())
+        bot.register_next_step_handler(message, edit_city)
 
 @bot.message_handler(content_types=['text'])
 def send_weather(message):
@@ -320,6 +335,9 @@ def send_weather(message):
     elif message.text == "Главное меню":
         bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
+    else:
+        bot.send_message(message.chat.id, "Вы ввели некорректное сообщение. Выберите пункт из меню!", reply_markup=menu3())
+        bot.register_next_step_handler(message, send_weather)
 
 
 @bot.message_handler(content_types=['text'])     #выбор дня, не позднее 5 дней с сегодняшнего дня, и поиск разницы с сегодняшней датой
@@ -437,6 +455,9 @@ def rec(message):
     elif message.text == "Главное меню":
         bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
+    else:
+        bot.send_message(message.chat.id, "Вы ввели некорректное сообщение. Выберите пункт из меню!", reply_markup=menu5())
+        bot.register_next_step_handler(message, rec)
 
 @bot.message_handler(content_types=['text']) #вывод рекомендаций по одежде после нажатия кнопки "погода по времени"
 def rec2(message):
@@ -518,6 +539,9 @@ def rec2(message):
     elif message.text == "Главное меню":
         bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
+    else:
+        bot.send_message(message.chat.id, "Вы ввели некорректное сообщение. Выберите пункт из меню!", reply_markup=menu5())
+        bot.register_next_step_handler(message, rec2)
 
 #comfort_menu = ''
 #recommend_true = ''
