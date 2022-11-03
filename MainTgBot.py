@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[4]:
+# In[1]:
 
 
 import telebot; #библиотека для работы с телеграм-ботами
@@ -108,6 +108,14 @@ def menu_otcenka():
     buttonback =types.KeyboardButton("Главное меню")
     murkup.add(button_1, button_2, button_3, button_4, button_5, buttonback)
     return murkup
+
+def recomendation(message):
+    rec=open('rec.txt','a')
+    rec.write('id:['+str(message.chat.id)+']\n'+str(message.text)+'\n \n')
+    rec.close
+    bot.send_message(message.chat.id, "Ваша рекомендация отправлена, теперь вы в главном меню.", reply_markup=menu1())
+    bot.register_next_step_handler(message, menu_weather)
+    
 
 
 def geo_pos(city: str): #получение координат через название города
@@ -589,7 +597,8 @@ def obr_sv(message):
         bot.send_message(message.chat.id, "Поставьте оценку нашему боту от 1 до 5. Ответ пришлите в виде сообщения", reply_markup=menu_otcenka())
         bot.register_next_step_handler(message, ocenka)
     elif message.text == "Написать рекомендации":
-        bot.send_message(message.chat.id,"функция 3")
+        bot.send_message(message.chat.id,"Напишите ваши рекомендации или недовольства в сообщении. Они будут нами обработаны.")
+        bot.register_next_step_handler(message, recomendation)
     elif message.text == "Пройти опрос":
         bot.send_message(message.chat.id,"Спасибо, что согласились пройти наш опрос 🤗! Всего будет четыре вопроса, что займет у вас всего пару минут \U0001F64F")
         bot.send_message(message.chat.id,"1.Удобен ли интерфейс и меню нашего бота для вас?", reply_markup=yes_no_buttons())
@@ -642,11 +651,3 @@ def ocenka(message):
 
 bot.polling(none_stop=True, interval=0) #бесконечный запрос у сервера телеграмма
 
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
