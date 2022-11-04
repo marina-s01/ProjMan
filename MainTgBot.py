@@ -111,13 +111,21 @@ def menu_otcenka():
     return murkup
 
 def recomendation(message):
-    rec=open('rec.txt','a')
-    rec.write('id:['+str(message.chat.id)+']\n'+str(message.text)+'\n \n')
-    rec.close
-    bot.send_message(message.chat.id, "Ваша рекомендация отправлена, теперь вы в главном меню.", reply_markup=menu1())
-    bot.register_next_step_handler(message, menu_weather)
+    if message.text =='Отмена':
+        bot.send_message(message.chat.id, "Вы в главном меню.", reply_markup=menu1())
+        bot.register_next_step_handler(message, menu_weather)
+    else:
+        rec=open('rec.txt','a')
+        rec.write('id:['+str(message.chat.id)+']\n'+str(message.text)+'\n \n')
+        rec.close
+        bot.send_message(message.chat.id, "Ваша рекомендация отправлена, теперь вы в главном меню.", reply_markup=menu1())
+        bot.register_next_step_handler(message, menu_weather)
     
-
+def otmena():
+    murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    btback = types.KeyboardButton("Отмена")
+    murkup.add(btback)
+    return murkup
 
 def geo_pos(city: str): #получение координат через название города
     geolocator = geocoders.Nominatim(user_agent="telebot")
@@ -621,7 +629,7 @@ def obr_sv(message):
         bot.send_message(message.chat.id, "Поставьте оценку нашему боту от 1 до 5. Ответ пришлите в виде сообщения", reply_markup=menu_otcenka())
         bot.register_next_step_handler(message, ocenka)
     elif message.text == "Написать рекомендации":
-        bot.send_message(message.chat.id,"Напишите ваши рекомендации или недовольства в сообщении. Они будут нами обработаны.")
+        bot.send_message(message.chat.id,"Напишите ваши рекомендации или недовольства в сообщении. Они будут нами обработаны.",reply_markup=otmena())
         bot.register_next_step_handler(message, recomendation)
     elif message.text == "Пройти опрос":
         bot.send_message(message.chat.id,"Спасибо, что согласились пройти наш опрос 🤗! Всего будет четыре вопроса, что займет у вас всего пару минут \U0001F64F")
@@ -674,4 +682,10 @@ def ocenka(message):
 
 
 bot.polling(none_stop=True, interval=0) #бесконечный запрос у сервера телеграмма
+
+
+# In[ ]:
+
+
+
 
