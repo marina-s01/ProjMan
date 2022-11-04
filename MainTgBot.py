@@ -110,6 +110,7 @@ def menu_otcenka():
     murkup.add(button_1, button_2, button_3, button_4, button_5, buttonback)
     return murkup
 
+#рекомендации
 def recomendation(message):
     if message.text =='Отмена':
         bot.send_message(message.chat.id, "Вы в главном меню.", reply_markup=menu1())
@@ -120,7 +121,8 @@ def recomendation(message):
         rec.close
         bot.send_message(message.chat.id, "Ваша рекомендация отправлена, теперь вы в главном меню.", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
-    
+
+#кнопка отмены
 def otmena():
     murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btback = types.KeyboardButton("Отмена")
@@ -129,8 +131,8 @@ def otmena():
 
 def geo_pos(city: str): #получение координат через название города
     geolocator = geocoders.Nominatim(user_agent="telebot")
-    latitude = str(geolocator.geocode(city).latitude)
-    longitude = str(geolocator.geocode(city).longitude)
+    latitude = str(geolocator.geocode(get_name_of_city(city)).latitude)
+    longitude = str(geolocator.geocode(get_name_of_city(city)).longitude)
     return latitude, longitude
 
 def code_location(latitude: str, longitude: str, token_accu: str): #код города через accuweather при помощи коор-ат
@@ -190,8 +192,7 @@ Long = ""
 #Определение геолокации
 @bot.message_handler(content_types=['location'])
 def handle_loc(message):
-    global Long, Lat, city
-    geolocator = Nominatim(user_agent="geoapiExercises")
+    global Long, Lat
     if message.location is not None:
         bot.send_message == (message.location)
         geolocator = Nominatim(user_agent="geoapiExercises")
@@ -199,8 +200,16 @@ def handle_loc(message):
         Long = message.location.longitude
         location = geolocator.reverse(str(Lat)+","+str(Long))
         address = location.raw['address']
-        city = str(address.get('city'))
-        bot.send_message(message.chat.id, "Отлично! Ваш город - " + city, reply_markup=menu1())
+        df=pd.read_excel('./our_users.xlsx')
+        if any(df['id'] == message.from_user.id):
+            idx = df.index[df['id'] == message.from_user.id]
+            df['city'][idx] = str(address.get('city'))
+            df.to_excel('./our_users.xlsx', index=False)
+        else:
+            new_row = {'id':message.from_user.id, 'city':str(address.get('city'))}
+            df = df.append(new_row, ignore_index=True)
+            df.to_excel('./our_users.xlsx', index=False)
+        bot.send_message(message.chat.id, "Отлично! Ваш город - " + str(address.get('city')), reply_markup=menu1())
     bot.register_next_step_handler(message, menu_weather)
 
 
@@ -219,17 +228,23 @@ def menu_one(message):
     elif message.text == "Главное меню":
         bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
-    else: 
-        bot.send_message(message.chat.id, "Вы ввели некорректное сообщение. Выберите пункт из меню!", reply_markup=menu2())
-        bot.register_next_step_handler(message, menu_one)
-
+    #else: 
+        #bot.send_message(message.chat.id, "Вы ввели некорректное сообщение. Выберите пункт из меню!", reply_markup=menu2())
+        #bot.register_next_step_handler(message, menu_one)
 
 @bot.message_handler(content_types=['text'])
 def get_city(message): #получаем город
-    global city
-    city = message.text
-    if city in cities:
-        bot.send_message(message.chat.id, 'Город успешно изменен! Теперь вы будете получать погоду и рекомендации по одежде для города ' + str(city), reply_markup=menu1())
+    if message.text in cities:
+        df=pd.read_excel('./our_users.xlsx')        
+        if any(df['id'] == message.from_user.id):
+            idx = df.index[df['id'] == message.from_user.id]
+            df['city'][idx] = message.text
+            df.to_excel('./our_users.xlsx')
+        else:
+            new_row = {'id':message.from_user.id, 'city': message.text}
+            df = df.append(new_row, ignore_index=True)
+            df.to_excel('./our_users.xlsx', index=False)
+        bot.send_message(message.chat.id, 'Город успешно изменен! Теперь вы будете получать погоду и рекомендации по одежде для города ' + message.text, reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
     else:
         bot.send_message(message.from_user.id, 'Данного города нет в списке, попробуйте еще раз!')
@@ -253,7 +268,14 @@ def menu_weather(message):
         bot.send_message(message.chat.id, "Вы ввели некорректное сообщение. Выберите пункт из меню!", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
 
-#Проверка записи времени
+@bot.message_handler(content_types=['text'])
+def get_name_of_city(message): #получаем город
+    df=pd.read_excel('./our_users.xlsx')        
+    if any(df['id'] == message):
+        idx = df.index[df['id'] == message]
+        return "".join(c for c in str(df['city'].values [idx]) if c.isalpha())   
+        
+#Проверка записи врем)ени
 @bot.message_handler(content_types=['text'])
 def check(d):
     ntftime = d
@@ -268,25 +290,26 @@ def check(d):
 #предусмотрено добавление нового пользователя
 @bot.message_handler(content_types=['text'])
 def check_time(message):
-    ntftime = message.text
-    user_id = message.from_user.id
-    final_time = check(ntftime)
-    if final_time == False:
-        bot.send_message(message.from_user.id, 'Время уведомлений набрано неверно! Попробуйте еще раз')
-        bot.register_next_step_handler(message, check_time)
-    else:
-        df=pd.read_excel('./ntfDB.xlsx')
-        if any(df['id'] == user_id):
-            idx = df.index[df['id'] == user_id]
-            df['city'][idx] = city
-            df['ntftime'][idx] = ntftime
-            df.to_excel('./ntfDB.xlsx')
-        else:
-            new_row = {'id':user_id, 'ntftime':ntftime, 'city':city}
-            df = df.append(new_row, ignore_index=True)
-            df.to_excel('./ntfDB.xlsx', index=False)
-        bot.send_message(message.chat.id, 'Время уведомлений успешно выбрано!', reply_markup=menu1())
+    if (message.text == "Главное меню"):
+        bot.send_message(message.chat.id, 'Вы вернулись в главное меню!', reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
+    else:
+        if check(message.text) == False:
+            bot.send_message(message.from_user.id, 'Время уведомлений набрано неверно! Попробуйте еще раз')
+            bot.register_next_step_handler(message, check_time)
+        else:
+            df=pd.read_excel('./ntfDB.xlsx')
+            if any(df['id'] == message.from_user.id):
+                idx = df.index[df['id'] == message.from_user.id]
+                df['city'][idx] = get_name_of_city(message.from_user.id)
+                df['ntftime'][idx] = message.text
+                df.to_excel('./ntfDB.xlsx', index=False)
+            else:
+                new_row = {'id':message.from_user.id, 'ntftime':message.text, 'city':get_name_of_city(message.from_user.id)}
+                df = df.append(new_row, ignore_index=True)
+                df.to_excel('./ntfDB.xlsx', index=False)
+            bot.send_message(message.chat.id, 'Время уведомлений успешно выбрано!', reply_markup=menu1())
+            bot.register_next_step_handler(message, menu_weather)
 
 @bot.message_handler(content_types=['text'])
 def menu_notif(message):
@@ -330,10 +353,10 @@ def edit_city(message):
 @bot.message_handler(content_types=['text'])
 def send_weather(message):
     if message.text == "Узнать погоду сейчас":
-        latitude, longitude = geo_pos(city)
+        latitude, longitude = geo_pos(get_name_of_city(message.chat.id))
         cod_loc = code_location(latitude, longitude, token_accu)
         temperature, feeltemperature, precipitation, windspeed, winddir, phrase, humidity = weather_now(cod_loc, token_accu)
-        bot.send_message(message.chat.id,f"Сейчас в городе {city} {phrase}, {temperature}°C , ветер {winddir}"+" "+f"{windspeed} км/ч",reply_markup=menu5())
+        bot.send_message(message.chat.id,f"Сейчас в городе {get_name_of_city(message.chat.id)} {phrase}, {temperature}°C , ветер {winddir}"+" "+f"{windspeed} км/ч",reply_markup=menu5())
         bot.register_next_step_handler(message, rec)
 
     elif message.text == "Узнать погоду по времени":
@@ -356,29 +379,29 @@ def menu_day(message):
         day=1
         day_rec = 1
         #bot.send_message(message.chat.id, "Отлично!", reply_markup=menu6())
-        weather_choose(message, day,city,token_accu)
+        weather_choose(message, day,get_name_of_city(message.from_user.id),token_accu)
     elif message.text == day2.strftime("%d-%m-%Y"):
         #murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         day=2
         day_rec = 2
         #bot.send_message(message.chat.id, "Отлично!", reply_markup=menu6())
-        weather_choose(message, day,city,token_accu)
+        weather_choose(message, day,get_name_of_city(message.from_user.id),token_accu)
     elif message.text == day3.strftime("%d-%m-%Y"):
         #murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         day=3
         day_rec = 3
         #bot.send_message(message.chat.id, "Отлично! ", reply_markup=menu6())
-        weather_choose(message, day,city,token_accu)
+        weather_choose(message, day,get_name_of_city(message.from_user.id),token_accu)
     elif message.text == day4.strftime("%d-%m-%Y"):
         #murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         day=4
         day_rec = 4
         #bot.send_message(message.chat.id, "Отлично!  ", reply_markup=menu6())
-        weather_choose(message, day,city,token_accu)
+        weather_choose(message, day,get_name_of_city(message.from_user.id),token_accu)
     else: bot.send_message(message.from_user.id, 'Упс! Ошибочка!')
 
 @bot.message_handler(content_types=['text'])
-def weather_choose(message, day: int,city: str,token_accu: str):
+def weather_choose(message, day: int, city: str,token_accu: str):
         latitude, longitude=geo_pos(city)
         cod_loc = code_location(latitude, longitude, token_accu)
         date, temperaturemin,temperaturemax ,feeltemperaturemin,feeltemperaturemax, precipitation, windspeed, winddir, phrase = weather_day(cod_loc, token_accu,day)
@@ -389,7 +412,7 @@ def weather_choose(message, day: int,city: str,token_accu: str):
 @bot.message_handler(content_types=['text']) #вывод рекомендаций по одежде после нажатия кнопки "погода сейчас"
 def rec(message):
     if message.text == "Получить рекомендации одежды":
-        latitude, longitude = geo_pos(city)
+        latitude, longitude = geo_pos(get_name_of_city(message.from_user.id))
         cod_loc = code_location(latitude, longitude, token_accu)
         temperature, feeltemperature, precipitation, windspeed, winddir, phrase, humidity = weather_now(cod_loc, token_accu)
 
@@ -470,7 +493,7 @@ def rec(message):
 @bot.message_handler(content_types=['text']) #вывод рекомендаций по одежде после нажатия кнопки "погода по времени"
 def rec2(message):
     if message.text == "Получить рекомендации одежды":
-        latitude, longitude=geo_pos(city)
+        latitude, longitude=geo_pos(get_name_of_city(message.chat.id))
         cod_loc = code_location(latitude, longitude, token_accu)
         date, temperaturemin,temperaturemax ,feeltemperaturemin,feeltemperaturemax, precipitation, windspeed, winddir, phrase = weather_day(cod_loc, token_accu,day_rec)
         feeltemperature = (feeltemperaturemax+feeltemperaturemin)/2
@@ -685,7 +708,3 @@ bot.polling(none_stop=True, interval=0) #бесконечный запрос у 
 
 
 # In[ ]:
-
-
-
-
