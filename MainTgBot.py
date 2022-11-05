@@ -16,7 +16,7 @@ from datetime import timedelta, datetime, time
 import pandas as pd
 import numpy as np
 bot = telebot.TeleBot('5688775484:AAFfcMbAm_t-qEOnuqanR63ivL4UJ-qJdeY') #переменная для работы с ботом через токен\
-token_accu="uioWSBHV0uUQ7kDF674rRPv0jfz3jWW3" # токены: uioWSBHV0uUQ7kDF674rRPv0jfz3jWW3    7pNet2S89J6HC7m6DdPIh5beY93ZhPOS    o8bQ6kOLDIm242Z9wZqvderTlzk6ynVR
+token_accu="7pNet2S89J6HC7m6DdPIh5beY93ZhPOS" # токены: uioWSBHV0uUQ7kDF674rRPv0jfz3jWW3    7pNet2S89J6HC7m6DdPIh5beY93ZhPOS    o8bQ6kOLDIm242Z9wZqvderTlzk6ynVR
 
 day1 = datetime.now()+timedelta(1)
 day2 = datetime.now()+timedelta(2)
@@ -96,7 +96,9 @@ def menu_otz():
     button_otz2 = types.KeyboardButton("Написать рекомендации")
     button_otz3 = types.KeyboardButton("Пройти опрос")
     button_otz4 = types.KeyboardButton("Главное меню")
-    murkup.add(button_otz1, button_otz2, button_otz3, button_otz4)
+    murkup.add(button_otz1, button_otz3)
+    murkup.add(button_otz2)
+    murkup.add(button_otz4)
     return murkup
 
 def menu_otcenka():
@@ -221,10 +223,6 @@ def menu_one(message):
         bot.register_next_step_handler(message, get_city)
     elif message.text == "Определить геолокацию":
         bot.register_next_step_handler(message, handle_loc)
-    #   global city
-    #   city="Новосибирск"
-    #   bot.send_message(message.chat.id, "Отлично!", reply_markup=menu1())
-    #   bot.register_next_step_handler(message, menu_weather)
     elif message.text == "Главное меню":
         bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
@@ -275,7 +273,7 @@ def get_name_of_city(message): #получаем город
         idx = df.index[df['id'] == message]
         return "".join(c for c in str(df['city'].values [idx]) if c.isalpha())   
         
-#Проверка записи врем)ени
+#Проверка записи времени
 @bot.message_handler(content_types=['text'])
 def check(d):
     ntftime = d
@@ -341,7 +339,7 @@ def edit_city(message):
         bot.send_message(message.chat.id, "Давайте определим город, погода которого вас интересует, для этого воспользуйтесь кнопками ниже", reply_markup=menu2())
         bot.register_next_step_handler(message, menu_one)
     elif message.text == "Уведомления":
-        bot.send_message(message.chat.id, "Отлично!", reply_markup=menu7())
+        bot.send_message(message.chat.id, "Вы можете выбрать время получения уведомления или отключить существующее.", reply_markup=menu7())
         bot.register_next_step_handler(message, menu_notif)
     elif message.text == "Главное меню":
         bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
@@ -482,7 +480,8 @@ def rec(message):
                     bot.send_message(message.chat.id,"Сейчас жаркая погода! 🙃Предлагаем вам надеть футболку👕 и шорты🩳, а также не забудьте очки🕶 и кепку🧢 или шляпу👒",reply_markup=menu5())
                 if windspeed < 36:
                     bot.send_message(message.chat.id,"Сейчас отличная погода!🙃Предлагаем вам надеть футболку👕 и шорты🩳, а также не забудьте очки🕶 и кепку🧢 или шляпу👒",reply_markup=menu5())
-
+        bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
+        bot.register_next_step_handler(message, menu_weather)
     elif message.text == "Главное меню":
         bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
@@ -565,7 +564,8 @@ def rec2(message):
                     bot.send_message(message.chat.id,f"{date} будет жаркая погода! 🙃Предлагаем вам надеть футболку👕 и шорты🩳, а также не забудьте очки🕶 и кепку🧢 или шляпу👒",reply_markup=menu5())
                 if windspeed < 36:
                     bot.send_message(message.chat.id,f"{date} будет отличная погода!🙃Предлагаем вам надеть футболку👕 и шорты🩳, а также не забудьте очки🕶 и кепку🧢 или шляпу👒",reply_markup=menu5())
-        #bot.register_next_step_handler(message, menu_weather)
+        bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
+        bot.register_next_step_handler(message, menu_weather)
 
     elif message.text == "Главное меню":
         bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
@@ -643,7 +643,7 @@ def question_final(message):
         new_row = {'id':user_id, 'comfort_menu':comfort_menu, 'recommend_true':recommend_true,'weather_true':weather_true, 'add_city':add_city, 'date':date}
         df = df.append(new_row, ignore_index=True)
     df.to_excel('./interview.xlsx', index=False)
-    bot.send_message(message.chat.id, "Спасибо за уделенное время, Ваше мнение очень значимо для нас \U0001F9D0! Ваша оценка позволит выбрать правильное направление в работе над улучшением качества нашего бота \U0001F917! Если вы где то выбрали нет, просим вас написать рекомендации, что бы вы хотели увидеть.", reply_markup=menu1())
+    bot.send_message(message.chat.id, "Спасибо за уделенное время, Ваше мнение очень значимо для нас \U0001F9D0! Ваша оценка позволит выбрать правильное направление в работе над улучшением качества нашего бота \U0001F917! Если вы где-то выбрали нет, просим вас пройти в меню <обратная связь>, <написать рекомендации>, что бы вы хотели увидеть.", reply_markup=menu1())
     bot.register_next_step_handler(message, menu_weather)
 
 @bot.message_handler(content_types=['text']) #вывод рекомендаций по одежде после нажатия кнопки "погода по времени"
@@ -670,7 +670,7 @@ def ocenka(message):
     if message.text == "Главное меню":
         bot.send_message(message.chat.id, "Вы в главном меню! Выберите необходимую кнопку.", reply_markup=menu1())
         bot.register_next_step_handler(message, menu_weather)
-    elif message.text==1 or  message.text == "2" or message.text == "3" or message.text == "4" or message.text == "5":
+    elif message.text== "1" or  message.text == "2" or message.text == "3" or message.text == "4" or message.text == "5":
         if message.text == "1":
             o = 1
             bot.send_message(message.chat.id, "Очень жаль, что вы поставили такую оценку!😞 Если вас не затруднит, то пройдите опрос и напишите нам рекомендацию, чтобы мы знали, что необходимо изменить.😇")
@@ -708,3 +708,7 @@ bot.polling(none_stop=True, interval=0) #бесконечный запрос у 
 
 
 # In[ ]:
+
+
+
+
