@@ -133,8 +133,8 @@ def otmena():
 
 def geo_pos(city: str): #получение координат через название города
     geolocator = geocoders.Nominatim(user_agent="telebot")
-    latitude = str(geolocator.geocode(get_name_of_city(city)).latitude)
-    longitude = str(geolocator.geocode(get_name_of_city(city)).longitude)
+    latitude = str(geolocator.geocode(city).latitude)
+    longitude = str(geolocator.geocode(city).longitude)
     return latitude, longitude
 
 def code_location(latitude: str, longitude: str, token_accu: str): #код города через accuweather при помощи коор-ат
@@ -274,7 +274,7 @@ def get_name_of_city(message): #получаем город
     df=pd.read_excel('./our_users.xlsx')        
     if any(df['id'] == message):
         idx = df.index[df['id'] == message]
-        return "".join(c for c in str(df['city'].values [idx]) if c.isalpha())   
+        return str("".join(c for c in str(df['city'].values[idx]) if c.isalpha()))  
         
 #Проверка записи времени
 @bot.message_handler(content_types=['text'])
@@ -354,10 +354,10 @@ def edit_city(message):
 @bot.message_handler(content_types=['text'])
 def send_weather(message):
     if message.text == "Узнать погоду сейчас":
-        latitude, longitude = geo_pos(get_name_of_city(message.chat.id))
+        latitude, longitude = geo_pos(get_name_of_city(message.from_user.id))
         cod_loc = code_location(latitude, longitude, token_accu)
         temperature, feeltemperature, precipitation, windspeed, winddir, phrase, humidity = weather_now(cod_loc, token_accu)
-        bot.send_message(message.chat.id,f"Сейчас в городе {get_name_of_city(message.chat.id)} {phrase}, {temperature}°C , ветер {winddir}"+" "+f"{windspeed} км/ч",reply_markup=menu5())
+        bot.send_message(message.chat.id,f"Сейчас в городе {get_name_of_city(message.from_user.id)} {phrase}, {temperature}°C , ветер {winddir}"+" "+f"{windspeed} км/ч",reply_markup=menu5())
         bot.register_next_step_handler(message, rec)
 
     elif message.text == "Узнать погоду по времени":
@@ -495,7 +495,7 @@ def rec(message):
 @bot.message_handler(content_types=['text']) #вывод рекомендаций по одежде после нажатия кнопки "погода по времени"
 def rec2(message):
     if message.text == "Получить рекомендации одежды":
-        latitude, longitude=geo_pos(get_name_of_city(message.chat.id))
+        latitude, longitude=geo_pos(get_name_of_city(message.for_user.id))
         cod_loc = code_location(latitude, longitude, token_accu)
         date, temperaturemin,temperaturemax ,feeltemperaturemin,feeltemperaturemax, precipitation, windspeed, winddir, phrase = weather_day(cod_loc, token_accu,day_rec)
         feeltemperature = (feeltemperaturemax+feeltemperaturemin)/2
@@ -711,7 +711,3 @@ bot.polling(none_stop=True, interval=0) #бесконечный запрос у 
 
 
 # In[ ]:
-
-
-
-
