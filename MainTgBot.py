@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[1]:
 
 
 import telebot; #библиотека для работы с телеграм-ботами
@@ -495,7 +495,7 @@ def rec(message):
 @bot.message_handler(content_types=['text']) #вывод рекомендаций по одежде после нажатия кнопки "погода по времени"
 def rec2(message):
     if message.text == "Получить рекомендации одежды":
-        latitude, longitude=geo_pos(get_name_of_city(message.for_user.id))
+        latitude, longitude=geo_pos(get_name_of_city(message.chat.id))
         cod_loc = code_location(latitude, longitude, token_accu)
         date, temperaturemin,temperaturemax ,feeltemperaturemin,feeltemperaturemax, precipitation, windspeed, winddir, phrase = weather_day(cod_loc, token_accu,day_rec)
         feeltemperature = (feeltemperaturemax+feeltemperaturemin)/2
@@ -711,3 +711,7 @@ bot.polling(none_stop=True, interval=0) #бесконечный запрос у 
 
 
 # In[ ]:
+
+
+
+
