@@ -16,7 +16,7 @@ from datetime import timedelta, datetime, time
 import pandas as pd
 import numpy as np
 bot = telebot.TeleBot('5688775484:AAFfcMbAm_t-qEOnuqanR63ivL4UJ-qJdeY') #переменная для работы с ботом через токен\
-token_accu="7pNet2S89J6HC7m6DdPIh5beY93ZhPOS" # токены: uioWSBHV0uUQ7kDF674rRPv0jfz3jWW3    7pNet2S89J6HC7m6DdPIh5beY93ZhPOS    o8bQ6kOLDIm242Z9wZqvderTlzk6ynVR
+token_accu="n6CX4Rg3ASo3MWn5NwEJMy1SP6I8CnBk" # токены: uioWSBHV0uUQ7kDF674rRPv0jfz3jWW3    7pNet2S89J6HC7m6DdPIh5beY93ZhPOS    o8bQ6kOLDIm242Z9wZqvderTlzk6ynVR
 
 day1 = datetime.now()+timedelta(1)
 day2 = datetime.now()+timedelta(2)
